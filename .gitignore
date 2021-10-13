@@ -1,5 +1,7 @@
 
 DREAMER.mat
+EEG.csv
+Features.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
