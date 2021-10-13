@@ -34,7 +34,7 @@ python preprocessing.py
 python featureExtraction.py
 python main.py
 ```
-- ***Deactivate*** the virtual environment.
+- ***Deactivate the virtual environment.***
 ```bash
 deactivate
 ```
