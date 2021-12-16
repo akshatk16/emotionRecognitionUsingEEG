@@ -23,6 +23,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
 import pandas as pd
+from sklearn.metrics import precision_recall_fscore_support as score
 
 
 rand = 7
@@ -62,7 +63,7 @@ def main():
     totalModels = len(models)
     data = []
     ranks = [i for i in range(1, totalModels+1)]
-    headers = ["Model", "% Accuracy", ""]
+    headers = ["Model", "% Accuracy", "precision", "recall", "fscore"]
     modelsEvaluated = 0
     for i in models:
         modelsEvaluated += 1
@@ -75,18 +76,19 @@ def main():
 
         # testing the model
         prediction=model.predict(X_test)
+
+
+        precision, recall, fscore, support = score(y_test, prediction)
         
         # calculating accuracy of the model
-        data.append([i, metrics.accuracy_score(y_test, prediction)*100])
-    
+        data.append([i, metrics.accuracy_score(y_test, prediction)*100, precision[0]*100, recall[0]*100, fscore[0]*100])
 
+    
     # print formatting
-    data.sort(key=lambda x : x[1], reverse=True)
-    data[0].append("<--- BEST MODEL FOR THESE PARAMETERS!")
-    for i in range(1, len(models)):
-        data[i].append("")
+
     print("\n")
     print(pd.DataFrame(data, ranks, headers), end="\n\n")
+    pd.DataFrame(data).to_csv('models.csv')
 
 if __name__ =="__main__":
     main()

@@ -1,0 +1,6 @@
+for each model
+    accuracy
+    f1Score
+    recall
+
+data extraction theta-alpha-beta

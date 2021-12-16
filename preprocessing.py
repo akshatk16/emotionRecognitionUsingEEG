@@ -8,25 +8,25 @@ from sklearn import preprocessing as pre
 
 def preprocessing(input, feature):
     totalData = signal.firwin(9, [0.0625, 0.46875], window = 'hamming')
-    alpha = signal.firwin(9, [0.0625, 0.125], window = 'hamming')
-    beta  = signal.firwin(9, [0.125, 0.203125], window = 'hamming')
-    gamma = signal.firwin(9, [0.203125, 0.46875], window = 'hamming')
+    theta = signal.firwin(9, [0.0625, 0.125], window = 'hamming')
+    alpha  = signal.firwin(9, [0.125, 0.203125], window = 'hamming')
+    beta = signal.firwin(9, [0.203125, 0.46875], window = 'hamming')
 
     # Filting
     totalDataFilt = signal.filtfilt(totalData, 1, input)
+    thetaFilt = signal.filtfilt(theta, 1, totalDataFilt)
     alphaFilt = signal.filtfilt(alpha, 1, totalDataFilt)
     betaFilt = signal.filtfilt(beta, 1, totalDataFilt)
-    gammaFilt = signal.filtfilt(gamma, 1, totalDataFilt)
 
     # welch
+    ftheta, psdtheta = signal.welch(thetaFilt, nperseg = 256)
     falpha, psdalpha = signal.welch(alphaFilt, nperseg = 256)
     fbeta, psdbeta = signal.welch(betaFilt, nperseg = 256)
-    fgamma, psdgamma = signal.welch(gammaFilt, nperseg = 256)
 
     # add to feature list
+    feature.append(max(psdtheta))
     feature.append(max(psdalpha))
     feature.append(max(psdbeta))
-    feature.append(max(psdgamma))
 
     return feature
 
@@ -67,9 +67,9 @@ def main():
                 print("\r%d%% Features Extracted" %(featuresPreprocessed * 100 / totalFeatures), end = "")
     col = []
     for i in range(0, 14):
+        col.append('psdtheta_'+str(i + 1)+'_un')
         col.append('psdalpha_'+str(i + 1)+'_un')
         col.append('psdbeta_'+str(i + 1)+'_un')
-        col.append('psdgamma_'+str(i + 1)+'_un')
     EEG = pd.DataFrame(tmp.reshape((23 * 18, tmp.shape[2])), columns = col)
     scaler = pre.StandardScaler()
     for i in range(len(col)):
