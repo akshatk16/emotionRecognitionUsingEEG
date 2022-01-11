@@ -52,8 +52,13 @@ def main():
     df=pd.read_csv("Features.csv")
     print("\n> Feartures fetched!")
     
-    y=df.iloc[:,-3]
+    y=df.iloc[:,-3] # Valence
+    # y=df.iloc[:,-2] # Arousal
+    # y=df.iloc[:,-1] # Dominance
+
+    # print(y)
     X=df.iloc[:,0:-3]
+    # print(X)
 
     X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=rand)
     print("\n> Dataset split into test and train sets!")
@@ -81,7 +86,7 @@ def main():
         precision, recall, fscore, support = score(y_test, prediction)
         
         # calculating accuracy of the model
-        data.append([i, metrics.accuracy_score(y_test, prediction)*100, precision[0]*100, recall[0]*100, fscore[0]*100])
+        data.append([i, round(metrics.accuracy_score(y_test, prediction)*100, 2), round(precision[0]*100, 2), round(recall[0]*100, 2), round(fscore[0]*100, 2)])
 
     
     # print formatting

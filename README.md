@@ -15,7 +15,7 @@ git clone https://github.com/akshatk16/emotionRecognitionUsingEEG.git
 - Create a virutal environment using:
 ```bash
 python -m pip install virtualenv
-virtualenv env
+python -m virtualenv env
 
 # for windows
 ./env/Scripts/activate
