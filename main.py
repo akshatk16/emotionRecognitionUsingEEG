@@ -23,6 +23,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
 import pandas as pd
+from sklearn.metrics import precision_recall_fscore_support as score
 
 
 rand = 7
@@ -51,8 +52,13 @@ def main():
     df=pd.read_csv("Features.csv")
     print("\n> Feartures fetched!")
     
-    y=df.iloc[:,-3]
+    y=df.iloc[:,-3] # Valence
+    # y=df.iloc[:,-2] # Arousal
+    # y=df.iloc[:,-1] # Dominance
+
+    # print(y)
     X=df.iloc[:,0:-3]
+    # print(X)
 
     X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=rand)
     print("\n> Dataset split into test and train sets!")
@@ -62,7 +68,7 @@ def main():
     totalModels = len(models)
     data = []
     ranks = [i for i in range(1, totalModels+1)]
-    headers = ["Model", "% Accuracy", ""]
+    headers = ["Model", "% Accuracy", "precision", "recall", "fscore"]
     modelsEvaluated = 0
     for i in models:
         modelsEvaluated += 1
@@ -75,18 +81,19 @@ def main():
 
         # testing the model
         prediction=model.predict(X_test)
+
+
+        precision, recall, fscore, support = score(y_test, prediction)
         
         # calculating accuracy of the model
-        data.append([i, metrics.accuracy_score(y_test, prediction)*100])
-    
+        data.append([i, round(metrics.accuracy_score(y_test, prediction)*100, 2), round(precision[0]*100, 2), round(recall[0]*100, 2), round(fscore[0]*100, 2)])
 
+    
     # print formatting
-    data.sort(key=lambda x : x[1], reverse=True)
-    data[0].append("<--- BEST MODEL FOR THESE PARAMETERS!")
-    for i in range(1, len(models)):
-        data[i].append("")
+
     print("\n")
     print(pd.DataFrame(data, ranks, headers), end="\n\n")
+    pd.DataFrame(data).to_csv('models.csv')
 
 if __name__ =="__main__":
     main()
